@@ -1,0 +1,8 @@
+---
+
+# avi_vrfcontext default variables
+state: present
+avi_api_update_method: patch
+avi_api_patch_op: add
+ip_type: "V4"
+route_id: 1

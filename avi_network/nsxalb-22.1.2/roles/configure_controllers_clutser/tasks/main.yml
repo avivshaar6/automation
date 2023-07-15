@@ -1,0 +1,24 @@
+---
+- name: Avi template Configuration File (Terraform Step03)
+  ansible.builtin.template:
+    src: avi_confige_and_create_cluster.tfvars.j2
+    dest: /home/k8s/nsxalb/nsxalb-22.1.2/code/terraform/step_03_configure_controllers/terraform.tfvars
+    mode: '0644'
+
+- name: Run Terraform Step03
+  community.general.terraform:
+    project_path: /home/k8s/nsxalb/nsxalb-22.1.2/code/terraform/step_03_configure_controllers/
+    force_init: true
+    state: present
+
+- name: Wait until HTTP status is 200
+  ansible.builtin.uri:
+    url: 'https://10.100.147.10/'
+    return_content: true
+    validate_certs: false
+    status_code:
+      - 200
+  until: uri_output.status == 200
+  retries: 200 # Retries for 200 * 3 seconds = 600 seconds = 10 minutes
+  delay: 3 # Every 3 seconds
+  register: uri_output

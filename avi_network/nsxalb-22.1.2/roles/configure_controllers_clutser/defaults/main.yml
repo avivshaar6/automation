@@ -1,0 +1,6 @@
+---
+
+# deploy avi controllers default variables
+# force_init: true
+# state: present
+# mode: '0644'

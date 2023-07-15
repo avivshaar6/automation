@@ -1,0 +1,58 @@
+{
+    "url": "https://10.100.147.10/api/systemconfiguration",
+    "uuid": "default",
+    "default_license_tier": "ENTERPRISE",
+    "dns_configuration": {
+        "search_domain": "terasky.demo",
+        "server_list": [
+            {
+                "addr": "10.100.100.100",
+                "type": "V4"
+            },
+            {
+                "addr": "172.16.20.10",
+                "type": "V4"
+            }
+        ]
+    },
+    "email_configuration": {
+        "disable_tls": false,
+        "from_email": "admin@avinetworks.com",
+        "mail_server_name": "localhost",
+        "mail_server_port": 25,
+        "smtp_type": "SMTP_LOCAL_HOST"
+    },
+    "linux_configuration": {
+        "banner": "Avi Demo with Terraform",
+        "cis_mode": false,
+        "motd": ""
+    },
+    "ntp_configuration": {
+        "ntp_servers": [
+            {
+                "key_number": 1,
+                "server": {
+                    "addr": "10.100.100.100",
+                    "type": "V4"
+                }
+            },
+            {
+                "key_number": 1,
+                "server": {
+                    "addr": "172.16.20.10",
+                    "type": "V4"
+                }
+            }
+        ]
+    },
+    "portal_configuration": {
+        "allow_basic_authentication": true,
+        "sslkeyandcertificate_refs": [
+            "{{ controller_certificate.obj.url }}"
+        ]
+    },
+    "secure_channel_configuration": {
+        "bypass_secure_channel_must_checks": false
+    },
+    "welcome_workflow_complete": true
+}

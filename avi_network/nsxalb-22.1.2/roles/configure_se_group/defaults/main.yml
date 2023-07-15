@@ -1,0 +1,14 @@
+---
+
+# avi_serviceenginegroup default variables
+tenant_name: "admin"
+state: present
+ha_mode: HA_MODE_LEGACY_ACTIVE_STANDBY
+min_scaleout_per_vs: 1
+buffer_se: "0"
+cpu_reserve: true
+mem_reserve: true
+
+avi_api_update_method: put
+avi_api_patch_op: add
+cloud_type: CLOUD_VCENTER

@@ -1,0 +1,67 @@
+# Avi Credentials for login
+avi_credentials:
+  username:    "{{ avi_username }}"
+  password:    "{{ avi_password }}"
+  controller:  "{{ avi_cluster_vip }}"
+  api_version: "{{ avi_version }}"
+
+# vCenter Variables:
+vcenter_url:         "{{ vcenter_url }}"
+vcenter_username:    "{{ vcenter_username }}"
+vcenter_password:    "{{ vcenter_password }}"
+vcenter_datacenter:  "{{ vcenter_datacenter }}"
+
+cloud_name:           "{{ cloud_name }}"
+avi_mgmt_network:     "{{ avi_mgmt_network }}"
+management_ip_subnet: "{{ management_ip_subnet }}"
+mask:                  {{ mask }}
+
+default_license_tier: "{{ default_license_tier }}"
+
+begin_addr: "{{ begin_addr }}"
+end_addr:   "{{ end_addr }}"
+
+default_route_name: "{{ default_route_name }}"
+default_route:      "{{ default_route }}"
+default_route_mask:  {{ default_route_mask }}
+next_hop_ip:        "{{ next_hop_ip }}"
+
+# SE-Group
+se_group_name:  "{{ se_group_name }}"
+max_se:         "{{ max_se }}"
+se_name_prefix: "{{ se_name_prefix }}"
+vcenter_folder: "{{ vcenter_folder }}"
+vcpus_per_se:   "{{ vcpus_per_se }}"
+memory_per_se:  "{{ memory_per_se }}"
+disk_per_se:    "{{ disk_per_se }}"
+
+# IPAM Profile
+ipam_name: "{{ ipam_name }}"
+configure_ipam_profile:
+  enabled: {{ configure_ipam_profile.enabled }}
+  networks:
+{% for network in configure_ipam_profile.networks %}
+    - portgroup: {{ network.portgroup }}
+      network:   {{ network.network }}
+      type:      {{ network.type }}
+      static_pool:
+{% for ip in network.static_pool %}
+        - {{ ip }} 
+{% endfor %}
+{% endfor %}
+
+# DNS Profile
+dns_name:    "{{ dns_name }}"
+domain_name: "{{ domain_name }}"
+
+# AVI Network Import Controller Certificate
+certificate_name:   "{{ certificate_name }}"
+certificate_file:   "{{ certificate_file }}"
+certificate_key:    "{{ certificate_key }}"
+common_name:        "{{ common_name }}"
+distinguished_name: "{{ distinguished_name }}"
+organization:       "{{ organization }}"
+
+# AVI Network Import Root CA Certificate
+root_ca_certificate_name: {{ root_ca_certificate_name }}
+root_ca_certificate:     "{{ root_ca_certificate }}"

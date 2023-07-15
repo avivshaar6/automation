@@ -1,0 +1,34 @@
+---
+- name: Main Playbook
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+    - vars.yml
+  roles:
+    - role: deploy_avi_controllers
+      tags: deploy_avi_controllers
+
+    - role: set_new_password
+      tags: set_new_password
+
+    - role: configure_controllers_clutser
+      tags: configure_controllers_clutser
+
+    - role: configure_vcenter_cloud
+      tags: configure_vcenter_cloud
+
+    - role: create_default_route_mgmt
+      tags: create_default_route_mgmt
+
+    - role: configure_se_group
+      tags: configure_se_group
+
+    - role: configure_ipma_profile
+      tags: configure_ipma_profile
+
+    - role: configure_dns_profile
+      tags: configure_dns_profile
+
+    - role: import_avi_certificates
+      tags: import_avi_certificates

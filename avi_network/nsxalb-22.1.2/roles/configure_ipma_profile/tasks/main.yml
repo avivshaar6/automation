@@ -1,0 +1,62 @@
+---
+- name: Configure IPAM Profile
+  block:
+    - name: Update IPAM Network Objects with Static Pool
+      avi_network:
+        avi_credentials: "{{ avi_credentials }}"
+        state: "{{ state }}"
+        avi_api_update_method: "{{ avi_api_update_method }}"
+        avi_api_patch_op: "{{ avi_api_patch_op }}"
+        name: "{{ item.portgroup }}"
+        cloud_ref: "/api/cloud?name={{ cloud_name }}"
+        dhcp_enabled: "{{ dhcp_enabled }}"
+        configured_subnets:
+          - prefix:
+              ip_addr:
+                addr: "{{ item.network | ansible.utils.ipaddr('network') }}"
+                type: "{{ item.type }}"
+              mask: "{{ item.network | ansible.utils.ipaddr('prefix') }}"
+            static_ip_ranges:
+            - range:
+                begin:
+                  addr: "{{ item.static_pool.0 }}"
+                  type: "{{ item.type }}"
+                end:
+                  addr: "{{ item.static_pool.1 }}"
+                  type: "{{ item.type }}"
+              type: "{{ avi_network_type }}"
+        ip6_autocfg_enabled: "{{ ip6_autocfg_enabled }}"
+      loop: "{{ configure_ipam_profile.networks }}"
+      register: ipam_net
+
+    - name: Create list with IPAM Network URLs
+      set_fact: ipam_net_urls="{{ ipam_net.results | map(attribute='obj.url') | list }}"
+
+    - name: Create list formated for Avi IPAM profile API
+      set_fact:
+        ipam_list: "{{ ipam_list | default([]) + [{ 'nw_ref': item  }] }}"
+      loop: "{{ ipam_net_urls }}"
+
+    - name: Create Avi IPAM Profile
+      avi_ipamdnsproviderprofile:
+        avi_credentials: "{{ avi_credentials }}"
+        state: "{{ state }}"
+        name: "{{ ipam_name }}"
+        type: "{{ avi_ipamdnsproviderprofile_type }}"
+        internal_profile:
+          ttl: 30
+          usable_networks: "{{ ipam_list }}"
+        allocate_ip_in_vrf: "{{ allocate_ip_in_vrf }}"
+      register: create_ipam
+
+    - name: Update Cloud Configuration with IPAM profile 
+      avi_cloud:
+        avi_credentials: "{{ avi_credentials }}"
+        avi_api_update_method: "{{ avi_api_update_method }}"
+        avi_api_patch_op: "{{ avi_api_patch_op }}"
+        name: "{{ cloud_name }}"
+        ipam_provider_ref: "{{ create_ipam.obj.url }}"
+        vtype: "{{ avi_cloud_vtype }}"
+
+  when: configure_ipam_profile.enabled == true
+  tags: ipam_profile

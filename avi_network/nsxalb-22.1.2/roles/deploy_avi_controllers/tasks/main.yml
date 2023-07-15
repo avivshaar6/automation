@@ -1,0 +1,12 @@
+---
+- name: Avi template Configuration File (Terraform Step01)
+  ansible.builtin.template:
+    src: deploy_avi_terraform.tfvars.j2
+    dest: /home/k8s/nsxalb/nsxalb-22.1.2/code/terraform/step_01_deploy_avi_controllers/terraform.tfvars
+    mode: "{{ mode }}"
+
+- name: Run Terraform Step01
+  community.general.terraform:
+    project_path: /home/k8s/nsxalb/nsxalb-22.1.2/code/terraform/step_01_deploy_avi_controllers/
+    force_init: "{{ force_init }}"
+    state: "{{ state }}"

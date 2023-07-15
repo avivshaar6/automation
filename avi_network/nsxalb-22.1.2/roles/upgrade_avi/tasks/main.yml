@@ -1,0 +1,50 @@
+---
+- name: Avi Upgrade
+  block:
+  # - name: Download Avi Update Package
+  #   ansible.builtin.get_url:
+  #     url: "https://downloads.avipulse.vmware.com/SoftwaresDownloads/Version-22.1.2-2p5/avi_patch-22.1.2-2p5-9061.pkg?Expires=1680192855&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly9kb3dubG9hZHMuYXZpcHVsc2Uudm13YXJlLmNvbS9Tb2Z0d2FyZXNEb3dubG9hZHMvVmVyc2lvbi0yMi4xLjItMnA1L2F2aV9wYXRjaC0yMi4xLjItMnA1LTkwNjEucGtnIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjgwMTkyODU1fX19XX0_&Signature=qSsultZHgyI5SdmPiZJrHr0LjZSUTzrKnQTNt74yDDYuw9HNoQ4rg-n9mUs5BGMFNk3qIXwjCP8dESoeisDiT0flPzdrOXX~qcuyD-ACuUYDyxoWq-fnSin4u9WTLpxq2m~057exRkXxX9BB0lVokk9PrxOH78tzLDg8CSAudRhumHzyYAI4pdMRuSO3ACmj8wbKQvXlFwkpq6ii9Krkjt78p8EhlQDXjdPNnfpaW2iGBnhxIUMG29mueB8~5ofd0P-erRvS53bz01XfFfE-dFknCJywnMul0FNbKUJ~Uw-jwwP9KIkF6N0RqKqBRbkEAFa6zyFM2stBg9T6jlM5Eg__&Key-Pair-Id=KVHPPUR9VX6BJ"
+  #     dest: '/tmp/controller.pkg'
+  #     mode: '0655'
+  #   until: download_image is not failed
+  #   retries: 30
+  #   delay: 5
+  #   register: download_image
+
+  # - name: Block to upload image
+  #   block:
+    - name: Get existing image list
+      community.network.avi_api_session:
+        avi_credentials: "{{ avi_credentials }}"
+        http_method: get
+        timeout: 3000
+        path: image
+      register: before_image_list
+
+    - name: Upload avi patch image to controller
+      community.network.avi_api_image:
+        avi_credentials:
+          username: "admin"
+          password: "Bpovtmg1!"
+          controller: "10.100.147.10"
+          api_version: "22.12"
+        file_path: /tmp/controller.pkg
+        api_version: 22.1.2
+
+    # - name: Remove upgrade file
+    #   ansible.builtin.file:
+    #     path: '/tmp/controller.pkg'
+    #     state: absent
+
+    # - name: Get image list
+    #   community.network.avi_api_session:
+    #     avi_credentials: "{{ avi_credentials }}"
+    #     http_method: get
+    #     timeout: 3000
+    #     path: image
+    #   register: image_list
+
+    # # - name: Set variable for image list length
+    # #   ansible.builtin.set_fact:
+    # #     image_list_comparison: "{{ image_list.obj.results|length - before_image_list.obj.results|length  }}"
+    # #     image_index: "{{ image_list.obj.results|length - 1 | int }}"

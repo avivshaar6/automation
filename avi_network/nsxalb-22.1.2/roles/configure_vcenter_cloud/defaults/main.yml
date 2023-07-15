@@ -1,0 +1,27 @@
+---
+
+# avi_cloud dfault variables
+dhcp_enabled: false
+enable_vip_static_routes: false
+license_type: "LIC_CORES"
+mtu: 1500
+prefer_static_routes: false
+vtype: CLOUD_VCENTER
+deactivate_vm_discovery: false
+use_content_lib: false
+privilege: WRITE_ACCESS
+avi_api_update_method: patch
+avi_api_patch_op: add
+ip_type: "V4"
+cloud_type: CLOUD_VCENTER
+
+# api_api_session default variables
+http_method: get
+until: mgmt_network.obj.results.0.url is defined
+retries: 5
+delay: 10
+
+# avi_network default variables
+state: present
+avi_network_type: STATIC_IPS_FOR_VIP_AND_SE
+ip6_autocfg_enabled: false

@@ -1,0 +1,18 @@
+---
+- name: Test Open Ports On TKGM VIP VM
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+    - /home/k8s/tkgm-validations/prod_code/vars.yml
+
+  tasks:
+    - name: Check global ports
+      wait_for:
+        host: "{{ item.dst_ip }}"
+        port: "{{ item.port }}"
+        state: started         # Port should be open
+        delay: 0               # No wait before first check (sec)
+        timeout: 3             # Stop checking after timeout (sec)
+      ignore_errors: yes
+      with_items: "{{ tkgm_vip_test_variables }}"

@@ -1,0 +1,29 @@
+---
+- name: Configure DNS Profile
+  block:
+    - name: Create Avi DNS Profile
+      avi_ipamdnsproviderprofile:
+        avi_credentials: "{{ avi_credentials }}"
+        allocate_ip_in_vrf: "{{ allocate_ip_in_vrf }}"
+        state: "{{ state }}"
+        name: "{{ dns_name }}"
+        type: "{{ dns_type }}"
+        internal_profile:
+          ttl: "{{ ttl }}"
+          dns_service_domain:
+          - pass_through: "{{ pass_through }}"
+            domain_name: "{{ domain_name }}"
+          - pass_through: "{{ pass_through }}"
+            domain_name: "terasky.local"
+      register: create_dns_avi
+
+    - name: Update Cloud Configuration with DNS profile 
+      avi_cloud:
+        avi_credentials: "{{ avi_credentials }}"
+        avi_api_update_method: "{{ avi_api_update_method }}"
+        avi_api_patch_op: "{{ avi_api_patch_op }}"
+        name: "{{ cloud_name }}"
+        dns_provider_ref: "{{ create_dns_avi.obj.url }}"
+        vtype: "{{ vcenter_vtype }}"
+  
+  when: default_license_tier == "ENTERPRISE"

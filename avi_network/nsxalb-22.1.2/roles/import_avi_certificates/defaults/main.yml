@@ -1,0 +1,15 @@
+---
+
+# Default Avi Controller Variablres
+state: present
+certificate_base64: false
+certificate_format: "SSL_PEM"
+algorithm: "SSL_KEY_ALGORITHM_RSA"
+key_size: "SSL_KEY_2048_BITS"
+certificate_status: "SSL_CERTIFICATE_FINISHED"
+certificate_type: "SSL_CERTIFICATE_TYPE_SYSTEM"
+
+# Default Root CA Variablres
+root_certificate_format: "SSL_PEM"
+root_certificate_key_base64: false
+type: "SSL_CERTIFICATE_TYPE_CA"

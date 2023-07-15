@@ -1,0 +1,11 @@
+---
+
+# deploy avi controllers default variables
+mode: '0644'
+force_init: true
+state: present
+# return_content: true
+# validate_certs: false
+# status_code: 200
+# retries: 200
+# delay: 3

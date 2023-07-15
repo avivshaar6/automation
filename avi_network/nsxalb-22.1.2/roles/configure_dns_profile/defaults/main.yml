@@ -1,0 +1,11 @@
+---
+
+# Default variables for dns
+allocate_ip_in_vrf: false
+state: present
+dns_type: "IPAMDNS_TYPE_INTERNAL_DNS"
+ttl: 30
+pass_through: true
+avi_api_update_method: patch
+avi_api_patch_op: add
+vcenter_vtype: CLOUD_VCENTER

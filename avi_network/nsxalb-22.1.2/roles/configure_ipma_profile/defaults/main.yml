@@ -1,0 +1,13 @@
+---
+
+# avi_vrfcontext default variables
+state: present
+avi_api_update_method: patch
+avi_api_patch_op: add
+dhcp_enabled: false
+avi_network_type: STATIC_IPS_FOR_VIP_AND_SE
+ip6_autocfg_enabled: false
+avi_ipamdnsproviderprofile_type: IPAMDNS_TYPE_INTERNAL
+ttl: 30
+allocate_ip_in_vrf: false
+avi_cloud_vtype: "CLOUD_VCENTER"

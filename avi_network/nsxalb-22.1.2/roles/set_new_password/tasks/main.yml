@@ -1,0 +1,18 @@
+---
+- name: Avi template Configuration File (Terraform Step02)
+  ansible.builtin.template:
+    src: set_new_password.tfvars.j2
+    dest: /home/k8s/nsxalb/nsxalb-22.1.2/code/terraform/step_02_set_new_password/terraform.tfvars
+    mode: '0644'
+
+- name: Run Terraform Step02
+  community.general.terraform:
+    project_path: /home/k8s/nsxalb/nsxalb-22.1.2/code/terraform/step_02_set_new_password/
+    force_init: true
+    state: present
+
+- name: Avi template Configuration File (Terraform Step03)
+  ansible.builtin.template:
+    src: avi_confige_and_create_cluster.tfvars.j2
+    dest: /home/k8s/nsxalb/nsxalb-22.1.2/code/terraform/step_03_configure_controllers/terraform.tfvars
+    mode: '0644'

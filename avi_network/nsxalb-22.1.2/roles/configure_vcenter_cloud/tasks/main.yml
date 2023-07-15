@@ -1,0 +1,71 @@
+---
+- name: Create a VMware cloud with write access mode
+  community.network.avi_cloud:
+    avi_credentials: "{{ avi_credentials }}"
+    dhcp_enabled: "{{ dhcp_enabled }}"
+    enable_vip_static_routes: "{{ enable_vip_static_routes }}"
+    license_type: "{{ license_type }}"
+    mtu: "{{ mtu }}"
+    name: "{{ cloud_name }}"
+    prefer_static_routes: "{{ prefer_static_routes }}"
+    vcenter_configuration:
+      datacenter: "{{ vcenter_datacenter }}"
+      deactivate_vm_discovery: "{{ deactivate_vm_discovery }}"
+      use_content_lib: "{{ use_content_lib }}"
+      username: "{{ vcenter_username }}"
+      password: "{{ vcenter_password }}"
+      vcenter_url: "{{ vcenter_url }}"
+      privilege: "{{ privilege }}"
+    vtype: "{{ vtype }}"
+
+- name: Get Mangement Network UUID
+  community.network.avi_api_session:
+    avi_credentials: "{{ avi_credentials }}"
+    http_method: "{{ http_method }}"
+    path: "vimgrnwruntime?name={{ avi_mgmt_network }}"
+  until: "{{ until }}"
+  retries: "{{ retries }}"
+  delay: "{{ delay }}"
+  register: mgmt_network
+
+- name: Update Cloud Configuration with Mgmt Network 
+  community.network.avi_cloud:
+    avi_credentials: "{{ avi_credentials }}"
+    avi_api_update_method: "{{ avi_api_update_method }}"
+    avi_api_patch_op: "{{ avi_api_patch_op }}"
+    name: "{{ cloud_name }}"
+    vcenter_configuration:
+      management_network: "{{ mgmt_network.obj.results.0.url }}"
+      management_ip_subnet:
+        ip_addr:
+          addr: "{{ management_ip_subnet }}"
+          type: "{{ ip_type }}"
+        mask: "{{ mask }}"
+    vtype: "{{ cloud_type }}"
+
+- name: Update SE Mgmt Network Object with Static Pool
+  community.network.avi_network:
+    avi_credentials: "{{ avi_credentials }}"
+    state: "{{ state }}"
+    avi_api_update_method: "{{ avi_api_update_method }}"
+    avi_api_patch_op: "{{ avi_api_patch_op }}"
+    name: "{{ avi_mgmt_network }}"
+    cloud_ref: "/api/cloud?name={{ cloud_name }}"
+    dhcp_enabled: "{{ dhcp_enabled }}"
+    configured_subnets:
+      - prefix:
+          ip_addr:
+            addr: "{{ management_ip_subnet }}"
+            type: "{{ ip_type }}"
+          mask: "{{ mask }}"
+        static_ip_ranges:
+          - range:
+              begin:
+                addr: "{{ begin_addr }}"
+                type: "{{ ip_type }}"
+              end:
+                addr: "{{ end_addr }}"
+                type: "{{ ip_type }}"
+            type: "{{ avi_network_type }}"
+    ip6_autocfg_enabled: "{{ ip6_autocfg_enabled }}"
+  register: update_mgmt_network

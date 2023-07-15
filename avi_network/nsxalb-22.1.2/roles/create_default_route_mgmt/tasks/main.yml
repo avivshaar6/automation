@@ -1,0 +1,22 @@
+---
+- name: Create Default Route in Mgmt VRF
+  community.network.avi_vrfcontext:
+    avi_credentials: "{{ avi_credentials }}"
+    state: "{{ state }}"
+    avi_api_update_method: "{{ avi_api_update_method }}"
+    avi_api_patch_op: "{{ avi_api_patch_op }}"
+    name: "{{ default_route_name }}"
+    cloud_ref: "/api/cloud?name={{ cloud_name }}"
+    static_routes:
+      - prefix:
+          ip_addr:
+            addr: "{{ default_route }}"
+            type: "{{ ip_type }}"
+          mask: "{{ default_route_mask }}"
+        next_hop:
+          addr: "{{ next_hop_ip }}"
+          type: "{{ ip_type }}"
+        route_id: "{{ route_id }}"
+  register: mgmt_network_default_route
+
+  when: default_license_tier == "ESSENTIALS"

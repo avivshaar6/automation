@@ -1,0 +1,61 @@
+---
+- name: Configure controller Certificate and Root CA
+  block:
+  ### Configure Avi Controller Certificate ###
+  - name: Update Avi Controller Certificate
+    community.network.avi_sslkeyandcertificate:
+      avi_credentials: "{{ avi_credentials }}"
+      state: "{{ state }}"
+      certificate:
+        certificate: "{{ certificate_file }}"
+        subject:
+          common_name: "{{ common_name }}"
+          distinguished_name: "{{ distinguished_name }}"
+          organization: "{{ organization }}"
+      certificate_base64: "{{ certificate_base64 }}"
+      format: "{{ certificate_format }}"
+      key: "{{ certificate_key }}"
+      key_base64: false
+      key_params:
+        algorithm: "{{ algorithm }}"
+        rsa_params:
+          key_size: "{{ key_size }}"
+      name:  "{{ certificate_name }}"
+      status: "{{ certificate_status }}"
+      type: "{{ certificate_type }}"
+    register: controller_certificate
+  
+  # - name: Print return information from the previous task
+  #   ansible.builtin.debug:
+  #     var: controller_certificate.obj.url
+  
+  - name: Avi template Configuration File
+    template:
+      src: avi_systemconfiguration.j2
+      dest: /tmp/avi_systemconfiguration.json
+
+  ### Configure Root CA Certificate ###
+  - name: Update Root CA Certificate
+    community.network.avi_sslkeyandcertificate:
+      avi_credentials: "{{ avi_credentials }}"
+      name: "{{ root_ca_certificate_name }}"
+      certificate:
+        certificate: "{{ root_ca_certificate }}"
+      format: "{{ root_certificate_format }}"
+      key_base64: "{{ root_certificate_key_base64 }}"
+      key_params:
+        algorithm: "{{ algorithm }}"
+        rsa_params:
+          key_size: "{{ key_size }}"
+      type: "{{ type }}"
+      state: "{{ state }}"
+
+  - name: Update Avi Certificate
+    uri:
+      url: "https://10.100.147.10/api/systemconfiguration"
+      url_username : "{{ avi_credentials.username  }}"
+      url_password: "{{ avi_credentials.password }}"
+      method: PUT
+      body_format: json
+      body: "{{ lookup('ansible.builtin.file', '/tmp/avi_systemconfiguration.json') }}"
+      validate_certs: false

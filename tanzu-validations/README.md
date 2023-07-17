@@ -1,4 +1,4 @@
-# Tanzu Validation Project - TeraSky Automation for Tanzu Project
+# Tanzu Validation Project - Automation for Tanzu Project
 
 This script is designed to check the opening of ports between machines that sit on different networks (the Tanzu VMs will going to be deployed there) and tells which ports are open and which are not.
 This script is designed to run before the installation of Tanzu at the customer on 5 new test machines that will be deployed at the customer, which will allow us a simple installation in a minimum of time.

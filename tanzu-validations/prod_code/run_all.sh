@@ -28,10 +28,10 @@ configure_listen_ports_on_destinations() {
 
   for destination in $destinations; do
     # SCP the script file to the destination
-    sshpass -p "$password" scp "$source_script" "$username@$destination:/home/k8s/listen-ports.sh"
+    sshpass -p "$password" scp "$source_script" "$username@$destination:/home/k8s/$source_script"
 
     # SSH into the destination and execute the script
-    sshpass -p "$password" ssh "$username@$destination" "chmod +x /home/k8s/listen-ports.sh; /home/k8s/listen-ports.sh"
+    sshpass -p "$password" ssh "$username@$destination" "chmod +x /home/k8s/$source_script; /home/k8s/$source_script"
   done
 }
 

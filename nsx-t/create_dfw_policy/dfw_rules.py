@@ -1,17 +1,20 @@
 import requests
 import json
 import pandas as pd
+import os
 
 requests.packages.urllib3.disable_warnings()  # Ignore from requests module warnings
 
-data = pd.read_csv("policy.csv")
-NSX_ENDPOINT = "https://nvip.policy.co.il"
+
+NSX_API_TOKEN: str = os.environ.get("NSX_API_TOKEN")
+NSX_ENDPOINT: str = os.environ.get("NSX_ENDPOINT")
+CSV_FILE_PATH: str = os.environ.get("CSV_FILE_PATH")
+
+data = pd.read_csv(CSV_FILE_PATH)
 HEADERS = {
     'Content-Type': 'application/json',
-    'Authorization': 'Basic YWRtaW46Mm9AMUFuYU4yMDIx',
-    'Cookie': 'JSESSIONID=EB39DAA1860B5D91AD8774236C4B551E'
+    'Authorization': f'Basic {NSX_API_TOKEN}'
 }
-
 
 def _check_if_services_exists():
     global clean_display_name
@@ -24,13 +27,10 @@ def _check_if_services_exists():
         if protocol == 'TCP':
             for x in service_array:
                 spl = x.split(' ')
-                # print(x)
                 try:
                     if "[" in spl[1]:
                         try:
                             clean_display_name = spl[1].replace('[', '').replace(']', '')
-                            # print(clean_display_name)
-                            # print(f"Work on {x} service")
 
                             url = f"{NSX_ENDPOINT}/policy/api/v1/infra/services/{clean_display_name}-TCP"
 
@@ -40,10 +40,8 @@ def _check_if_services_exists():
                             response = requests.request("GET", url, headers=headers, data=json.dumps(payload),
                                                         verify=False)
                             result = (response.json())
-                            # print(result["display_name"])
 
                             if result["display_name"] == f"{clean_display_name}-TCP":
-                                #     print(result["display_name"])
                                 print(f"service {clean_display_name}-TCP is already exist!")
 
                         except:
@@ -61,11 +59,9 @@ def _check_if_services_exists():
                         headers = HEADERS
 
                         response = requests.request("GET", url, headers=headers, data=json.dumps(payload), verify=False)
-                        result = (response.json())
-                        # print(result["display_name"])
+                        result = response.json()
 
                         if result["display_name"] == f"{x}-TCP":
-                            #     print(result["display_name"])
                             print(f"service {x}-TCP is already exist!")
                     except:
                         print(f"Now we create the service: {x}-TCP")
@@ -74,14 +70,10 @@ def _check_if_services_exists():
         elif protocol == 'UDP':
             for x in service_array:
                 spl = x.split(' ')
-                # print(x)
                 try:
                     if "[" in spl[1]:
                         try:
                             clean_display_name = spl[1].replace('[', '').replace(']', '')
-                            # print(clean_display_name)
-                            # print(f"Work on {x} service")
-
                             url = f"{NSX_ENDPOINT}/policy/api/v1/infra/services/{clean_display_name}-UDP"
 
                             payload = {}
@@ -90,10 +82,8 @@ def _check_if_services_exists():
                             response = requests.request("GET", url, headers=headers, data=json.dumps(payload),
                                                         verify=False)
                             result = (response.json())
-                            # print(result["display_name"])
 
                             if result["display_name"] == f"{clean_display_name}-UDP":
-                                #     print(result["display_name"])
                                 print(f"service {clean_display_name}-UDP is already exist!")
 
                         except:
@@ -111,11 +101,9 @@ def _check_if_services_exists():
                         headers = HEADERS
 
                         response = requests.request("GET", url, headers=headers, data=json.dumps(payload), verify=False)
-                        result = (response.json())
-                        # print(result["display_name"])
+                        result = response.json()
 
                         if result["display_name"] == f"{x}-UDP":
-                            #     print(result["display_name"])
                             print(f"service {x}-UDP is already exist!")
                     except:
                         print(f"Now we create the service: {x}-UDP")
@@ -186,19 +174,13 @@ def check_if_section_exists(section_name: str) -> bool:
     payload = {}
     res = requests.request("GET", url, headers=headers, data=json.dumps(payload), verify=False)
     sections = res.json()
-    # print(sections)
 
     for section in sections["results"]:
-        # print(section["display_name"])
         asd = section["display_name"]
         if section_name == section["display_name"]:
-           # print(f"we found one: ----->{section_name} and {asd}")
             return True
         else:
-           # print(f"we still looking: ----->{section_name} and {asd}")
             continue
-   # print(f"we don`t found and match: ----->{section_name} and {asd}")
-   # print("False")
     return False
 
 
@@ -208,9 +190,6 @@ def create_rule(display_name: str, rule: dict, section_name: str):
     print(payload)
     headers = HEADERS
     res = requests.request("PATCH", url, headers=headers, data=json.dumps(payload), verify=False)
-    # print(f"Section: {dst_url} Succeeded with response code: {res}")
-    # return res.json()
-
 
 def create_section(dst_url: str, display_name: str):
     url = f"{NSX_ENDPOINT}/policy/api/v1/infra/domains/default/security-policies/{dst_url}"
@@ -221,21 +200,17 @@ def create_section(dst_url: str, display_name: str):
     headers = HEADERS
     res = requests.request("PATCH", url, headers=headers, data=json.dumps(payload), verify=False)
     print(f"Section: {display_name} Succeeded with response code: {res}")
-    # return res.json()
 
 
 def get_services_list(service_array: list, protocol: str) -> list:
     services_array = []
     for x in service_array:
         spl = x.split(' ')
-        # print(x)
         try:
             if "[" in spl[1]:
                 clean_display_name = spl[1].replace('[', '').replace(']', '')
-                # print(f"{clean_display_name}-{protocol}")
                 new_service = f"{clean_display_name}-{protocol}"
                 services_array.append(new_service)
-        # print(services_array) //Print clean services array!!!
         except:
             services_array.append(f"{x}-{protocol}")
     return services_array
@@ -254,10 +229,8 @@ def main():
         protocol = get_protocol(data=data, index=i)
 
         service_array = services[0].split(', ')
-        # print(service_array)
         services_list = get_services_list(service_array=service_array, protocol=protocol)
         services_paths = []
-        # print(services_list)
         for service in services_list:
             service_path = f"/infra/services/{service}"
             services_paths.append(service_path)
@@ -265,9 +238,7 @@ def main():
         rule_name = f"{clean_src}-To-{clean_dst}-{i}"
 
         rule = get_rule(display_name=rule_name, src_groups=srcs, dst_groups=dsts, services=services_paths)
-        # print(rule)
         section_exist = check_if_section_exists(section_name=dst)
-        # print(section_exist)
         if section_exist:
             print("create a rule.....")
             create_rule(display_name=rule_name, rule=rule, section_name=clean_dst)

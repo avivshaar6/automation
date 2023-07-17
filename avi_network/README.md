@@ -1,4 +1,4 @@
-# NSXALB - TeraSky Automation for Tanzu Project
+# NSXALB - Automation for Tanzu Project
 
 This project provides a ability to deploy Avi Network cluster for Tanzu project
 

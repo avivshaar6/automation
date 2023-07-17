@@ -24,6 +24,8 @@ b. The script goes through the csv on the source column and checks if there is s
 For example:
 
 This is a CSV of vRNI output:
+![Screenshot 2023-07-17 at 10 33 58](https://github.com/avivshaar6/automation/assets/60941781/57b1a43e-b89c-43c2-bb3a-9f8e073f6b4b)
 
 
-after run the script it will create the DFW section and rules:
+after running the script it will create the DFW section and rules:
+![Screenshot 2023-07-17 at 10 48 03](https://github.com/avivshaar6/automation/assets/60941781/05ba4b57-a2a7-4ba6-bf3f-f7f19fefad6e)

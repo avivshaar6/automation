@@ -18,8 +18,8 @@ The codes Consist of:
     1. NSX_ENDPOINT
     2. CSV_FILE_PATH
 
-a. The script checks if the port was created and if not it creates the new ports.
-b. The script goes through the csv on the source column and checks if there is such a section, if not it creates and puts the rules.
+1. The script checks if the port was created and if not it creates the new ports.
+2. The script goes through the csv on the source column and checks if there is such a section, if not it creates and puts the rules.
 
 For example:
 
